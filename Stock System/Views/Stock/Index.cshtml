@@ -1,0 +1,104 @@
+﻿@model Stock_System.Models.ViewModels.Stock.StockIndexViewModel
+
+@{
+    ViewData["Title"] = "Stock de Productos";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Ok"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form asp-action="Index" method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <label asp-for="Buscar" class="form-label">Buscar producto, código o depósito</label>
+        <input asp-for="Buscar" class="form-control" placeholder="" />
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="idProducto" class="form-label">Producto</label>
+        <select asp-for="idProducto" asp-items="Model.Productos" class="form-select">
+            <option value="">-- Todos los productos --</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="idDeposito" class="form-label">Depósito</label>
+        <select asp-for="idDeposito" asp-items="Model.Depositos" class="form-select">
+            <option value="">-- Todos los depósitos --</option>
+        </select>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <div class="form-check mb-2">
+            <input asp-for="SoloConStock" class="form-check-input" />
+            <label asp-for="SoloConStock" class="form-check-label">Solo con stock</label>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a asp-action="Index" class="btn btn-secondary">Limpiar</a>
+        <a asp-controller="Movimiento" asp-action="Index" class="btn btn-outline-dark">Ir a Movimientos</a>
+    </div>
+</form>
+
+<div class="mb-3">
+    <strong>Registros encontrados:</strong> @Model.Items.Count |
+    <strong>Stock total filtrado:</strong> <span class="badge bg-primary fs-6">@Model.StockTotalFiltrado</span>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Depósito</th>
+            <th>Stock Mínimo</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Items.Any())
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">No hay registros de stock para los filtros seleccionados.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.CodigoProducto</td>
+                    <td>@item.ProductoNombre</td>
+                    <td>@item.CategoriaNombre</td>
+                    <td>@item.DepositoNombre</td>
+                    <td>@item.StockMinimo</td>
+                    <td><strong>@item.Cantidad</strong></td>
+                    <td>
+                        @if (item.Cantidad <= 0)
+                        {
+                            <span class="badge bg-danger">Sin stock</span>
+                        }
+                        else if (item.BajoStockMinimo)
+                        {
+                            <span class="badge bg-warning text-dark">Stock bajo</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">OK</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

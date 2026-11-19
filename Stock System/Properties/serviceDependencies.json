@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "mssql3": {
+      "ignored": "true",
+      "type": "mssql",
+      "connectionId": "ConnectionStrings:AppDbContext"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConexiónBD"
+    }
+  }
+}
